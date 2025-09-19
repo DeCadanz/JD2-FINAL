@@ -1,8 +1,11 @@
 package by.it_academy.jd2.Mk_JD2_111_25.FINAL.controller;
 
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.dto.User;
-import by.it_academy.jd2.Mk_JD2_111_25.FINAL.service.UserService;
+import by.it_academy.jd2.Mk_JD2_111_25.FINAL.dto.UsersPage;
+import by.it_academy.jd2.Mk_JD2_111_25.FINAL.service.api.IUserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,12 +15,19 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class UsersController {
 
-    private final UserService us;
+    private final IUserService us;
 
     @PostMapping()
     public ResponseEntity<String> create(@RequestBody User user) {
         us.register(user);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @GetMapping()
+    public ResponseEntity<UsersPage<User>> getAll(@RequestParam("page") int page, @RequestParam("size") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        UsersPage<User> result = us.getAll(pageable);
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/{uuid}")

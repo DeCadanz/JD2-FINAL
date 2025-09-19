@@ -12,6 +12,9 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <spring-boot.version>3.5.5</spring-boot.version>
+        <jjwt.version>0.12.6</jjwt.version>
     </properties>
 
     <dependencies>
@@ -37,7 +40,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <version>3.5.5</version>
+            <version>${spring-boot.version}</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate.orm</groupId>
@@ -52,7 +55,13 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
-            <version>3.5.5</version>
+            <version>${spring-boot.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-security -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+            <version>${spring-boot.version}</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
         <dependency>
@@ -64,7 +73,35 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
-            <version>3.5.5</version>
+            <version>${spring-boot.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>${jjwt.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-impl -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>${jjwt.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-jackson -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>${jjwt.version}</version>
+            <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 

@@ -9,10 +9,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 
 @SpringBootApplication
-public class Main {
+public class FinApplication {
 
     public static void main(String[] args) {
 
-        SpringApplication.run(Main.class, args);
+        SpringApplication.run(FinApplication.class, args);
     }
 }

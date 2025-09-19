@@ -30,11 +30,11 @@ public class UserEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
-    private ERole role;
+    private ERole role = ERole.USER;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private EStatus status;
+    private EStatus status = EStatus.WAITING_ACTIVATION;
 
     @Column(name = "password")
     private String password;

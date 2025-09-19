@@ -5,6 +5,7 @@ import by.it_academy.jd2.Mk_JD2_111_25.FINAL.dto.User;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.repository.api.ICodeRepository;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.repository.api.IUserRepository;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.repository.entity.UserEntity;
+import by.it_academy.jd2.Mk_JD2_111_25.FINAL.service.api.IMailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -15,7 +16,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class MailService {
+public class MailService implements IMailService {
     private final JavaMailSender mailSender;
     private final IUserRepository ur;
     private final ICodeRepository cr;
@@ -35,12 +36,5 @@ public class MailService {
         String uuid = ue.getUuid();
         return cr.findById(uuid).get().getCode();
 
-    }
-
-    public boolean verifyCode(String code, String mail) {
-        Optional<UserEntity> u = ur.findByMail(mail);
-        UserEntity ue = u.get();
-        String uuid = ue.getUuid();
-        return code.equals(cr.findById(uuid).get().getCode());
     }
 }

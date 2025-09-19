@@ -7,6 +7,7 @@ import lombok.*;
 
 @Getter
 @Setter
+@ToString
 public class User {
     private String uuid;
     private Long dt_create;
