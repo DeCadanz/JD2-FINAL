@@ -15,5 +15,4 @@ public class User {
     private String fio;
     private ERole role;
     private EStatus status;
-    //private String password;
 }

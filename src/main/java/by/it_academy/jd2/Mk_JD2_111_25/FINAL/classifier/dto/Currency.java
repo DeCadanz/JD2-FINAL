@@ -1,5 +1,6 @@
 package by.it_academy.jd2.Mk_JD2_111_25.FINAL.classifier.dto;
 
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,12 +10,11 @@ import lombok.ToString;
 @Setter
 @ToString
 public class Currency {
-    @NotNull
     private String uuid;
     private Long dtCreate;
     private Long dtUpdate;
-    @NotNull
+    @NotEmpty
     private String title;
-    @NotNull
+    @NotEmpty
     private String description;
 }

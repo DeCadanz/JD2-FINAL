@@ -5,6 +5,7 @@ import by.it_academy.jd2.Mk_JD2_111_25.FINAL.account.dto.Account;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.account.dto.PageOfAccount;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.account.service.api.IAccountService;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.user.dto.User;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,15 +19,13 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AccountController {
 
-    private final IAccountService as;
+    private final IAccountService accountService;
 
     @PostMapping
-    public ResponseEntity<String> createAccount(@RequestBody Account account) {
-        System.out.println("eeee");
+    public ResponseEntity<String> createAccount(@Valid @RequestBody Account account) {
         var auth = SecurityContextHolder.getContext().getAuthentication();
         String uuid = auth.getPrincipal().toString();
-        System.out.println("User uuid: " + uuid);
-        as.add(account, uuid);
+        accountService.add(account, uuid);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -34,21 +33,19 @@ public class AccountController {
     public ResponseEntity<PageOfAccount<Account>> getAccounts(@RequestParam("page") int page, @RequestParam("size") int size) {
         var auth = SecurityContextHolder.getContext().getAuthentication();
         String uuid = auth.getPrincipal().toString();
-
-        Pageable pageable = PageRequest.of(page, size); //переместить это всё в сервис
-        PageOfAccount<Account> result = as.getAll(pageable, uuid);
-        System.out.println(result);
+        Pageable pageable = PageRequest.of(page, size);
+        PageOfAccount<Account> result = accountService.getPage(pageable, uuid);
         return ResponseEntity.ok(result);
     }
 
     @GetMapping("/{uuid}")
     public ResponseEntity<Account> getAccountById(@PathVariable("uuid") String uuid) {
-        return ResponseEntity.status(HttpStatus.OK).body(as.getByUuid(uuid));
+        return ResponseEntity.status(HttpStatus.OK).body(accountService.getByUuid(uuid));
     }
 
     @PutMapping("/{uuid}/dt_update/{dt_update}")
-    public ResponseEntity<User> updateAccount(@PathVariable("uuid") String uuid, @PathVariable("dt_update") Long dtUpdate, @RequestBody Account account) {
-        as.update(uuid, dtUpdate, account);
+    public ResponseEntity<User> updateAccount(@PathVariable("uuid") String uuid, @PathVariable("dt_update") Long dtUpdate, @Valid @RequestBody Account account) {
+        accountService.update(uuid, dtUpdate, account);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

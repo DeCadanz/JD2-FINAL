@@ -36,14 +36,11 @@ public class CabinetController {
     @PostMapping(path = "/login", produces = "application/json")
     public ResponseEntity<?> login(@Valid @RequestBody UserLogin userLogin) {
         return cs.login(userLogin);
-
     }
 
     @GetMapping(path = "/me", produces = "application/json")
     public ResponseEntity<User> me() {
         var auth = SecurityContextHolder.getContext().getAuthentication();
-        String uuid = auth.getPrincipal().toString();
-        User user = us.getByUuid(uuid);
-        return ResponseEntity.ok(user);
+        return cs.getInfo(auth.getName());
     }
 }

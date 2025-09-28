@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 public interface IAccountService {
     public void add(Account account, String uuid);
     public Account getByUuid(String uuid);
-    public PageOfAccount<Account> getAll(Pageable pageable, String uuuid);
+    public PageOfAccount<Account> getPage(Pageable pageable, String uuuid);
     public void update(String uuid, Long dtUpdate, Account account);
+    public void checkByUuid(String uuid);
 }

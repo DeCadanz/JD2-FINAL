@@ -16,29 +16,29 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class UsersController {
 
-    private final IUserService us;
+    private final IUserService userService;
 
     @PostMapping()
     public ResponseEntity<String> create(@RequestBody UserRegister user) {
-        us.add(user);
+        userService.add(user);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping()
-    public ResponseEntity<PageOfUser<User>> getAll(@RequestParam("page") int page, @RequestParam("size") int size) {
+    public ResponseEntity<PageOfUser<User>> getPage(@RequestParam("page") int page, @RequestParam("size") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        PageOfUser<User> result = us.getAll(pageable);
+        PageOfUser<User> result = userService.getPage(pageable);
         return ResponseEntity.ok(result);
     }
 
     @GetMapping("/{uuid}")
     public ResponseEntity<User> get(@PathVariable("uuid") String uuid) {
-        return ResponseEntity.status(HttpStatus.OK).body(us.getByUuid(uuid));
+        return ResponseEntity.status(HttpStatus.OK).body(userService.getByUuid(uuid));
     }
 
     @PutMapping("/{uuid}/dt_update/{dt_update}")
     public ResponseEntity<User> update(@PathVariable("uuid") String uuid, @PathVariable("dt_update") Long dtUpdate, @RequestBody UserRegister user) {
-        us.update(uuid, dtUpdate, user);
+        userService.update(uuid, dtUpdate, user);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

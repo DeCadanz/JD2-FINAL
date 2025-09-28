@@ -5,6 +5,7 @@ import by.it_academy.jd2.Mk_JD2_111_25.FINAL.account.dto.Operation;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.account.dto.PageOfOperation;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.account.repository.entity.OperationEntity;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.account.repository.api.IOperationRepository;
+import by.it_academy.jd2.Mk_JD2_111_25.FINAL.account.service.api.IAccountService;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.account.service.api.IOperationService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -21,60 +22,62 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class OperationService implements IOperationService {
-    private final IOperationRepository or;
+    private final IOperationRepository operationRepository;
+    private final IAccountService accountService;
 
     @Override
     @Transactional
     public void add(Operation operation, String uuid) {
-        OperationEntity oe = new OperationEntity();
-        String ouuid = UUID.randomUUID().toString();
+        accountService.checkByUuid(uuid);
+        OperationEntity operationEntity = new OperationEntity();
+        String oUuid = UUID.randomUUID().toString();
         Long utime = Instant.now().getEpochSecond();
-        oe.setUuid(ouuid);
-        oe.setDtCreate(utime);
-        oe.setDtUpdate(utime);
-        oe.setDate(utime);
-        oe.setDescription(operation.getDescription());
-        oe.setCategory(operation.getCategory());
-        oe.setValue(operation.getValue());
-        oe.setCurrency(operation.getCurrency());
-        oe.setAccount(uuid);
-        or.save(oe);
+        operationEntity.setUuid(oUuid);
+        operationEntity.setDtCreate(utime);
+        operationEntity.setDtUpdate(utime);
+        operationEntity.setDate(utime);
+        operationEntity.setDescription(operation.getDescription());
+        operationEntity.setCategory(operation.getCategory());
+        operationEntity.setValue(operation.getValue());
+        operationEntity.setCurrency(operation.getCurrency());
+        operationEntity.setAccount(uuid);
+        operationRepository.save(operationEntity);
     }
 
     @Override
-    public PageOfOperation<Operation> getAll(Pageable pageable) {
-        Page<OperationEntity> page = or.findAll(pageable);
-
+    public PageOfOperation<Operation> getOperationsPage(Pageable pageable, String uuid) {
+        accountService.checkByUuid(uuid);
+        Page<OperationEntity> page = operationRepository.findByAccount(pageable, uuid);
         List<Operation> content = new ArrayList<>();
-        for(OperationEntity oe : page.getContent()) {
+        for(OperationEntity operationEntity : page.getContent()) {
             Operation operation = new Operation();
-            operation.setUuid(oe.getUuid());
-            operation.setDtCreate(oe.getDtCreate());
-            operation.setDtUpdate(oe.getDtUpdate());
-            operation.setDate(oe.getDate());
-            operation.setDescription(oe.getDescription());
-            operation.setValue(oe.getValue());
-            operation.setCurrency(oe.getCurrency());
+            operation.setUuid(operationEntity.getUuid());
+            operation.setDtCreate(operationEntity.getDtCreate());
+            operation.setDtUpdate(operationEntity.getDtUpdate());
+            operation.setDate(operationEntity.getDate());
+            operation.setDescription(operationEntity.getDescription());
+            operation.setValue(operationEntity.getValue());
+            operation.setCurrency(operationEntity.getCurrency());
             content.add(operation);
         }
-        Page<Operation> ap = new PageImpl<>(content, pageable, page.getTotalElements());
-        return new PageOfOperation<>(ap);
+        Page<Operation> pageOfOperation = new PageImpl<>(content, pageable, page.getTotalElements());
+        return new PageOfOperation<>(pageOfOperation);
     }
 
     @Transactional
-    public void update(String auuid, String uuid, Long dtUpdate, Operation operation) {
-        OperationEntity oe = or.findByUuid(uuid).orElseThrow();
-        oe.setDate(operation.getDate());
-        oe.setDescription(operation.getDescription());
-        oe.setCategory(operation.getCategory());
-        oe.setValue(operation.getValue());
-        oe.setCurrency(operation.getCurrency());
-        or.save(oe);
+    public void update(String aUuid, String uuid, Long dtUpdate, Operation operation) {
+        OperationEntity operationEntity = operationRepository.findById(uuid).orElseThrow();
+        operationEntity.setDate(operation.getDate());
+        operationEntity.setDescription(operation.getDescription());
+        operationEntity.setCategory(operation.getCategory());
+        operationEntity.setValue(operation.getValue());
+        operationEntity.setCurrency(operation.getCurrency());
+        operationRepository.save(operationEntity);
     }
 
     @Transactional
-    public void delete(String auuid, String uuid, Long dtUpdate, Operation operation) {
-        OperationEntity oe = or.findByUuid(uuid).orElseThrow();
-        or.delete(oe);
+    public void delete(String aUuid, String uuid, Long dtUpdate, Operation operation) {
+        OperationEntity operationEntity = operationRepository.findByUuid(uuid).orElseThrow();
+        operationRepository.delete(operationEntity);
     }
 }

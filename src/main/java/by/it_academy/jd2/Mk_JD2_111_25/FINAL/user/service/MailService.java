@@ -1,7 +1,5 @@
 package by.it_academy.jd2.Mk_JD2_111_25.FINAL.user.service;
 
-
-import by.it_academy.jd2.Mk_JD2_111_25.FINAL.user.repository.entity.UserEntity;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.user.service.api.IMailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
@@ -13,14 +11,13 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MailService implements IMailService {
     private final JavaMailSender mailSender;
-    private final VerificationService vs;
 
     @Override
-    public void sendCode(UserEntity user) {
+    public void sendCode(String mail, String code) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(user.getMail());
+        message.setTo(mail);
         message.setSubject("Код верификации");
-        message.setText(vs.getCode(user));
+        message.setText(code);
         mailSender.send(message);
     }
 

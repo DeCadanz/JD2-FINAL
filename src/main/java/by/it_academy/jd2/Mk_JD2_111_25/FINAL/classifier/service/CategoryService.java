@@ -1,11 +1,10 @@
 package by.it_academy.jd2.Mk_JD2_111_25.FINAL.classifier.service;
 
-import by.it_academy.jd2.Mk_JD2_111_25.FINAL.classifier.dto.Currency;
+import by.it_academy.jd2.Mk_JD2_111_25.FINAL.audit.annotations.LogUserAction;
+import by.it_academy.jd2.Mk_JD2_111_25.FINAL.audit.enums.EEssenceType;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.classifier.dto.OperationCategory;
-import by.it_academy.jd2.Mk_JD2_111_25.FINAL.classifier.dto.PageOfCurrency;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.classifier.dto.PageOfOperationCategory;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.classifier.repository.api.IOperationCategoryRepository;
-import by.it_academy.jd2.Mk_JD2_111_25.FINAL.classifier.repository.entity.CurrencyEntity;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.classifier.repository.entity.OperationCategoryEntity;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.classifier.service.api.ICategoryService;
 import jakarta.transaction.Transactional;
@@ -24,36 +23,37 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CategoryService implements ICategoryService {
 
-    private final IOperationCategoryRepository or;
+    private final IOperationCategoryRepository operationCategoryRepository;
 
     @Override
     @Transactional
-    public void add(OperationCategory category) {
-
-        OperationCategoryEntity oe = new OperationCategoryEntity();
+    @LogUserAction(actionText = "Added Category", type = EEssenceType.CATEGORY)
+    public String add(OperationCategory category) {
+        OperationCategoryEntity operationCategoryEntity = new OperationCategoryEntity();
         String uuid = UUID.randomUUID().toString();
         Long utime = Instant.now().getEpochSecond();
-        oe.setUuid(uuid);
-        oe.setDtCreate(utime);
-        oe.setDtUpdate(utime);
-        oe.setTitle(category.getTitle());
-        or.save(oe);
+        operationCategoryEntity.setUuid(uuid);
+        operationCategoryEntity.setDtCreate(utime);
+        operationCategoryEntity.setDtUpdate(utime);
+        operationCategoryEntity.setTitle(category.getTitle());
+        operationCategoryRepository.save(operationCategoryEntity);
+        return uuid;
     }
 
     @Override
-    public PageOfOperationCategory<OperationCategory> getAll(Pageable pageable) {
-        Page<OperationCategoryEntity> page = or.findAll(pageable);
+    public PageOfOperationCategory<OperationCategory> getPage(Pageable pageable) {
+        Page<OperationCategoryEntity> page = operationCategoryRepository.findAll(pageable);
 
         List<OperationCategory> content = new ArrayList<>();
-        for(OperationCategoryEntity oe : page.getContent()) {
+        for(OperationCategoryEntity operationCategoryEntity : page.getContent()) {
             OperationCategory category = new OperationCategory();
-            category.setUuid(oe.getUuid());
-            category.setDtCreate(oe.getDtCreate());
-            category.setDtUpdate(oe.getDtUpdate());
-            category.setTitle(oe.getTitle());
+            category.setUuid(operationCategoryEntity.getUuid());
+            category.setDtCreate(operationCategoryEntity.getDtCreate());
+            category.setDtUpdate(operationCategoryEntity.getDtUpdate());
+            category.setTitle(operationCategoryEntity.getTitle());
             content.add(category);
         }
-        Page<OperationCategory> op = new PageImpl<>(content, pageable, page.getTotalElements());
-        return new PageOfOperationCategory<>(op);
+        Page<OperationCategory> pageOfOperationCategory = new PageImpl<>(content, pageable, page.getTotalElements());
+        return new PageOfOperationCategory<>(pageOfOperationCategory);
     }
 }

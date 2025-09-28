@@ -6,6 +6,7 @@ import by.it_academy.jd2.Mk_JD2_111_25.FINAL.classifier.dto.PageOfCurrency;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.classifier.dto.PageOfOperationCategory;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.classifier.service.api.ICategoryService;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.classifier.service.api.ICurrencyService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,32 +19,32 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class ClassifierController {
 
-    private final ICurrencyService cs;
-    private final ICategoryService os;
+    private final ICurrencyService currencyService;
+    private final ICategoryService categoryService;
 
     @PostMapping("/currency")
-    public ResponseEntity<String> addCurrency(@RequestBody Currency currency) {
-        cs.add(currency);
+    public ResponseEntity<String> addCurrency(@Valid @RequestBody Currency currency) {
+        currencyService.add(currency);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @GetMapping("/currency")
     public ResponseEntity<PageOfCurrency<Currency>> getAllCurrency(@RequestParam("page") int page, @RequestParam("size") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        PageOfCurrency<Currency> result = cs.getAll(pageable);
+        PageOfCurrency<Currency> result = currencyService.getPage(pageable);
         return ResponseEntity.ok(result);
     }
 
     @PostMapping(path = "/operation/category")
-    public ResponseEntity<String> addCategory(@RequestBody OperationCategory category) {
-        os.add(category);
+    public ResponseEntity<String> addCategory(@Valid @RequestBody OperationCategory category) {
+        categoryService.add(category);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @GetMapping(path = "/operation/category", produces = "application/json")
     public ResponseEntity<PageOfOperationCategory<OperationCategory>> getAllCategory(@RequestParam("page") int page, @RequestParam("size") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        PageOfOperationCategory<OperationCategory> result = os.getAll(pageable);
+        PageOfOperationCategory<OperationCategory> result = categoryService.getPage(pageable);
         return ResponseEntity.ok(result);
     }
 }

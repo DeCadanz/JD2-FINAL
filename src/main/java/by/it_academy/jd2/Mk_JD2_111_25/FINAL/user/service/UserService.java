@@ -1,5 +1,7 @@
 package by.it_academy.jd2.Mk_JD2_111_25.FINAL.user.service;
 
+import by.it_academy.jd2.Mk_JD2_111_25.FINAL.common.exceptions.UserAlreadyExistsException;
+import by.it_academy.jd2.Mk_JD2_111_25.FINAL.common.exceptions.UserNotFoundException;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.user.dto.User;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.user.dto.UserRegister;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.user.dto.PageOfUser;
@@ -12,93 +14,96 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-
 public class UserService implements IUserService {
 
-    private final IUserRepository ur;
+    private final IUserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public void add(UserRegister user) {
-        UserEntity ue = new UserEntity();
+    public void add(UserRegister userRegister) {
+        if (userRepository.findByMail(userRegister.getMail()).isPresent()) {
+            throw new UserAlreadyExistsException();
+        }
+        UserEntity userEntity = new UserEntity();
         String uuid = UUID.randomUUID().toString();
         Long utime = Instant.now().getEpochSecond();
-        ue.setUuid(uuid);
-        ue.setDtCreate(utime);
-        ue.setDtUpdate(utime);
-        ue.setFio(user.getFio());
-        ue.setMail(user.getMail());
-        ue.setRole(user.getRole());
-        ue.setStatus(user.getStatus());
-        ue.setPassword(user.getPassword());
-        ur.save(ue);
+        userEntity.setUuid(uuid);
+        userEntity.setDtCreate(utime);
+        userEntity.setDtUpdate(utime);
+        userEntity.setFio(userRegister.getFio());
+        userEntity.setMail(userRegister.getMail());
+        userEntity.setRole(userRegister.getRole());
+        userEntity.setStatus(userRegister.getStatus());
+        userEntity.setPassword(passwordEncoder.encode(userRegister.getPassword()));
+        userRepository.save(userEntity);
     }
 
     public User getByUuid(String uuid) {
-        User ud = new User();
-        Optional<UserEntity> ue = ur.findByUuid(uuid);
-        ud.setUuid(uuid);
-        ud.setDt_create(ue.get().getDtCreate());
-        ud.setDt_update(ue.get().getDtUpdate());
-        ud.setFio(ue.get().getFio());
-        ud.setMail(ue.get().getMail());
-        ud.setRole(ue.get().getRole());
-        ud.setStatus(ue.get().getStatus());
-
-        return ud;
+        User user = new User();
+        UserEntity userEntity = userRepository.findById(uuid)
+                .orElseThrow(() -> new UserNotFoundException());
+        user.setUuid(uuid);
+        user.setDt_create(userEntity.getDtCreate());
+        user.setDt_update(userEntity.getDtUpdate());
+        user.setFio(userEntity.getFio());
+        user.setMail(userEntity.getMail());
+        user.setRole(userEntity.getRole());
+        user.setStatus(userEntity.getStatus());
+        return user;
     }
 
     public User getByMail(String mail) {
-        User ud = new User();
-        Optional<UserEntity> ue = ur.findByMail(mail);
-        ud.setUuid(ue.get().getUuid());
-        ud.setDt_create(ue.get().getDtCreate());
-        ud.setDt_update(ue.get().getDtUpdate());
-        ud.setFio(ue.get().getFio());
-        ud.setMail(ue.get().getMail());
-        ud.setRole(ue.get().getRole());
-        ud.setStatus(ue.get().getStatus());
-
-        return ud;
+        User user = new User();
+        UserEntity userEntity = userRepository.findByMail(mail)
+                .orElseThrow(() -> new UserNotFoundException());
+        user.setUuid(userEntity.getUuid());
+        user.setDt_create(userEntity.getDtCreate());
+        user.setDt_update(userEntity.getDtUpdate());
+        user.setFio(userEntity.getFio());
+        user.setMail(userEntity.getMail());
+        user.setRole(userEntity.getRole());
+        user.setStatus(userEntity.getStatus());
+        return user;
     }
 
     @Transactional
     public void update(String uuid, Long dtUpdate, UserRegister user) {
-        UserEntity ue = ur.findByUuid(uuid).orElseThrow();
-        ue.setDtUpdate(dtUpdate);
-        ue.setMail(user.getMail());
-        ue.setFio(user.getFio());
-        ue.setRole(user.getRole());
-        ue.setStatus(user.getStatus());
-        ue.setPassword(user.getPassword());
-        ur.save(ue);
+        UserEntity userEntity = userRepository.findById(uuid)
+                .orElseThrow(() -> new UserNotFoundException());
+        userEntity.setDtUpdate(dtUpdate);
+        userEntity.setMail(user.getMail());
+        userEntity.setFio(user.getFio());
+        userEntity.setRole(user.getRole());
+        userEntity.setStatus(user.getStatus());
+        userEntity.setPassword(user.getPassword());
+        userRepository.save(userEntity);
     }
 
-    public PageOfUser<User> getAll(Pageable pageable) {
-        Page<UserEntity> page = ur.findAll(pageable);
-
+    public PageOfUser<User> getPage(Pageable pageable) {
+        Page<UserEntity> page = userRepository.findAll(pageable);
         List<User> content = new ArrayList<>();
-        for(UserEntity ue : page.getContent()) {
+        for(UserEntity userEntity : page.getContent()) {
             User user = new User();
-            user.setUuid(ue.getUuid());
-            user.setDt_create(ue.getDtCreate());
-            user.setDt_update(ue.getDtUpdate());
-            user.setFio(ue.getFio());
-            user.setMail(ue.getMail());
-            user.setRole(ue.getRole());
-            user.setStatus(ue.getStatus());
+            user.setUuid(userEntity.getUuid());
+            user.setDt_create(userEntity.getDtCreate());
+            user.setDt_update(userEntity.getDtUpdate());
+            user.setFio(userEntity.getFio());
+            user.setMail(userEntity.getMail());
+            user.setRole(userEntity.getRole());
+            user.setStatus(userEntity.getStatus());
             content.add(user);
         }
-        Page<User> up = new PageImpl<>(content, pageable, page.getTotalElements());
-        return new PageOfUser<>(up);
+        Page<User> pageOfUser = new PageImpl<>(content, pageable, page.getTotalElements());
+        return new PageOfUser<>(pageOfUser);
     }
 }

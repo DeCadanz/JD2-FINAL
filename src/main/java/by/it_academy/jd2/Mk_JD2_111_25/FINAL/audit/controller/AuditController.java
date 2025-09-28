@@ -17,6 +17,12 @@ public class AuditController {
 
     private final IAuditService as;
 
+    @PostMapping
+    public ResponseEntity<String> create(@RequestBody Audit audit) {
+        as.add(audit);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
     @GetMapping
     public ResponseEntity<PageOfAudit<Audit>> getAudit(@RequestParam("page") int page, @RequestParam("size") int size) {
         Pageable pageable = PageRequest.of(page, size);

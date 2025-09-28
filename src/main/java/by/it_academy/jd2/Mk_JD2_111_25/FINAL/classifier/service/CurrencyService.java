@@ -1,5 +1,7 @@
 package by.it_academy.jd2.Mk_JD2_111_25.FINAL.classifier.service;
 
+import by.it_academy.jd2.Mk_JD2_111_25.FINAL.audit.annotations.LogUserAction;
+import by.it_academy.jd2.Mk_JD2_111_25.FINAL.audit.enums.EEssenceType;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.classifier.dto.Currency;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.classifier.dto.PageOfCurrency;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.classifier.repository.api.ICurrencyRepository;
@@ -21,38 +23,39 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CurrencyService implements ICurrencyService {
 
-    private final ICurrencyRepository cr;
+    private final ICurrencyRepository currencyRepository;
 
     @Override
     @Transactional
-    public void add(Currency currency) {
-
-        CurrencyEntity ce = new CurrencyEntity();
+    @LogUserAction(actionText = "Added Currency", type = EEssenceType.CURRENCY)
+    public String add(Currency currency) {
+        CurrencyEntity currencyEntity = new CurrencyEntity();
         String uuid = UUID.randomUUID().toString();
         Long utime = Instant.now().getEpochSecond();
-        ce.setUuid(uuid);
-        ce.setDtCreate(utime);
-        ce.setDtUpdate(utime);
-        ce.setTitle(currency.getTitle());
-        ce.setDescription(currency.getDescription());
-        cr.save(ce);
+        currencyEntity.setUuid(uuid);
+        currencyEntity.setDtCreate(utime);
+        currencyEntity.setDtUpdate(utime);
+        currencyEntity.setTitle(currency.getTitle());
+        currencyEntity.setDescription(currency.getDescription());
+        currencyRepository.save(currencyEntity);
+        return uuid;
     }
 
     @Override
-    public PageOfCurrency<Currency> getAll(Pageable pageable) {
-        Page<CurrencyEntity> page = cr.findAll(pageable);
+    public PageOfCurrency<Currency> getPage(Pageable pageable) {
+        Page<CurrencyEntity> page = currencyRepository.findAll(pageable);
 
         List<Currency> content = new ArrayList<>();
-        for(CurrencyEntity ce : page.getContent()) {
+        for(CurrencyEntity currencyEntity : page.getContent()) {
             Currency currency = new Currency();
-            currency.setUuid(ce.getUuid());
-            currency.setDtCreate(ce.getDtCreate());
-            currency.setDtUpdate(ce.getDtUpdate());
-            currency.setTitle(ce.getTitle());
-            currency.setDescription(ce.getDescription());
+            currency.setUuid(currencyEntity.getUuid());
+            currency.setDtCreate(currencyEntity.getDtCreate());
+            currency.setDtUpdate(currencyEntity.getDtUpdate());
+            currency.setTitle(currencyEntity.getTitle());
+            currency.setDescription(currencyEntity.getDescription());
             content.add(currency);
         }
-        Page<Currency> pp = new PageImpl<>(content, pageable, page.getTotalElements());
-        return new  PageOfCurrency<>(pp);
+        Page<Currency> pageOfCurrency = new PageImpl<>(content, pageable, page.getTotalElements());
+        return new  PageOfCurrency<>(pageOfCurrency);
     }
 }

@@ -44,15 +44,11 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET,"/classifier/currency").permitAll()
                 .requestMatchers(HttpMethod.POST,"/classifier/currency").hasAnyRole("ADMIN", "MANAGER")
                 .requestMatchers("/classifier/operation/category").hasAnyRole("ADMIN", "MANAGER")
+                .requestMatchers("/audit").hasRole("ADMIN")
                 .anyRequest().authenticated()
         );
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 }

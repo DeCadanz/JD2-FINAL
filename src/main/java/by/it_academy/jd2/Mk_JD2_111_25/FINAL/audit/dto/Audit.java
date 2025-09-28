@@ -11,7 +11,7 @@ import lombok.ToString;
 public class Audit {
     private String uuid;
     private Long dt_create;
-    private User user;
+    private String userId;
     private String text;
     private EEssenceType type;
     private String id;

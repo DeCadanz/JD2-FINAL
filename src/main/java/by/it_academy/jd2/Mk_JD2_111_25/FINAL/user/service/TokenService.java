@@ -53,7 +53,6 @@ public class TokenService implements ITokenService {
 
     @Override
     public Claims extractClaims(String token) {
-
         JwtParserBuilder parser = Jwts.parser();
         parser.verifyWith(Keys.hmacShaKeyFor(secretKey.getBytes()));
         return parser.build()

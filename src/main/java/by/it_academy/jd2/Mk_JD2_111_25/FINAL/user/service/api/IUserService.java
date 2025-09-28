@@ -9,5 +9,5 @@ public interface IUserService {
     public void add(UserRegister user);
     public User getByUuid(String uuid);
     public void update(String uuid, Long dtUpdate, UserRegister user);
-    public PageOfUser<User> getAll(Pageable pageable);
+    public PageOfUser<User> getPage(Pageable pageable);
 }

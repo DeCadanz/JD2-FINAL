@@ -5,12 +5,14 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "audit", schema = "fin_app")
 @Getter
 @Setter
 @NoArgsConstructor
+@ToString
 public class AuditEntity {
     @Id
     @Column(name = "uuid")
@@ -29,5 +31,6 @@ public class AuditEntity {
     @Column(name = "type")
     private EEssenceType type;
 
-
+    @Column(name = "essence_id")
+    private String euuid;
 }
