@@ -25,6 +25,7 @@ public class AccountController {
     public ResponseEntity<String> createAccount(@Valid @RequestBody Account account) {
         var auth = SecurityContextHolder.getContext().getAuthentication();
         String uuid = auth.getPrincipal().toString();
+        System.out.println("ACCON UID: " + uuid);
         accountService.add(account, uuid);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }

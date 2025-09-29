@@ -49,8 +49,9 @@ public class CabinetService implements ICabinetService {
             if (userEntity.getStatus() == EStatus.WAITING_ACTIVATION) {
                 throw new UserNotVerifiedException();
             } else {
-                return ResponseEntity.status(HttpStatus.OK).header(
-                        "Authorization", "Bearer " + tokenService.generate(userLogin)).build();
+//                return ResponseEntity.status(HttpStatus.OK).header(
+//                        "Authorization", "Bearer " + tokenService.generate(userLogin)).build();
+                return ResponseEntity.ok(tokenService.generate(userLogin));
             }
         } else {
             throw new InvalidPasswordException();

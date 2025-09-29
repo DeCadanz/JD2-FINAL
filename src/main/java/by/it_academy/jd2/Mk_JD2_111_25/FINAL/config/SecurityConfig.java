@@ -40,10 +40,11 @@ public class SecurityConfig {
                         "/cabinet/login",
                         "/error"
                 ).permitAll()
-                .requestMatchers("/users").hasRole("ADMIN")
+                .requestMatchers("/users/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.GET,"/classifier/currency").permitAll()
                 .requestMatchers(HttpMethod.POST,"/classifier/currency").hasAnyRole("ADMIN", "MANAGER")
                 .requestMatchers("/classifier/operation/category").hasAnyRole("ADMIN", "MANAGER")
+                .requestMatchers("/account/**").hasAnyRole("USER", "ADMIN", "MANAGER")
                 .requestMatchers("/audit").hasRole("ADMIN")
                 .anyRequest().authenticated()
         );

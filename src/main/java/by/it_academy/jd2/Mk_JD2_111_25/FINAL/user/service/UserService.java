@@ -76,7 +76,7 @@ public class UserService implements IUserService {
         userEntity.setFio(userRegister.getFio());
         userEntity.setRole(userRegister.getRole());
         userEntity.setStatus(userRegister.getStatus());
-        userEntity.setPassword(userRegister.getPassword());
+        userEntity.setPassword(passwordEncoder.encode(userRegister.getPassword()));
         userRepository.save(userEntity);
         return uuid;
     }

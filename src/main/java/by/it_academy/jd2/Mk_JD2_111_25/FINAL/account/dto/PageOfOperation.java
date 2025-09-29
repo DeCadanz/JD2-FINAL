@@ -11,20 +11,20 @@ import java.util.List;
 public class PageOfOperation<T> {
     private int number;
     private int size;
-    private int total_pages;
-    private long total_elements;
+    private int totalPages;
+    private long totalElements;
     private boolean first;
-    private int number_of_elements;
+    private int numberOfElements;
     private boolean last;
     private List<Operation> content;
 
     public PageOfOperation(Page<Operation> page) {
         this.number = page.getNumber();
         this.size = page.getSize();
-        this.total_pages = page.getTotalPages();
-        this.total_elements = page.getTotalElements();
+        this.totalPages = page.getTotalPages();
+        this.totalElements = page.getTotalElements();
         this.first = page.isFirst();
-        this.number_of_elements = page.getNumberOfElements();
+        this.numberOfElements = page.getNumberOfElements();
         this.last = page.isLast();
         this.content = page.getContent();
     }
