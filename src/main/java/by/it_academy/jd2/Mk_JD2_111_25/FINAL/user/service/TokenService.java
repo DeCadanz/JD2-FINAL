@@ -23,10 +23,11 @@ public class TokenService implements ITokenService {
     @Value("${jwt.expiration-time}")
     private long expirationTime;
 
-    private final UserService us;
+    private final UserService userService;
 
+    @Override
     public String generate(UserLogin login) {
-        User user = us.getByMail(login.getMail());
+        User user = userService.getByMail(login.getMail());
 
         return Jwts.builder()
                 .subject(user.getUuid())
@@ -38,6 +39,7 @@ public class TokenService implements ITokenService {
                 .compact();
     }
 
+    @Override
     public boolean validate(String token) {
         try {
             Jwts.parser()
@@ -60,8 +62,9 @@ public class TokenService implements ITokenService {
                 .getPayload();
     }
 
+    @Override
     public User get(String token) {
         Claims claims = extractClaims(token);
-        return us.getByMail(claims.getSubject());
+        return userService.getByMail(claims.getSubject());
     }
 }

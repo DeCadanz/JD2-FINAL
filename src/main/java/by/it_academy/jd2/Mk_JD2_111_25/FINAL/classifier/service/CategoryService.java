@@ -27,7 +27,7 @@ public class CategoryService implements ICategoryService {
 
     @Override
     @Transactional
-    @LogUserAction(actionText = "Added Category", type = EEssenceType.CATEGORY)
+
     public String add(OperationCategory category) {
         OperationCategoryEntity operationCategoryEntity = new OperationCategoryEntity();
         String uuid = UUID.randomUUID().toString();

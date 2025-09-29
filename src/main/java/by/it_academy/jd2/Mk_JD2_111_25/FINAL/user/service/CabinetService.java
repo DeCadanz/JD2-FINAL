@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+
 @Service
 @RequiredArgsConstructor
 
@@ -31,17 +32,20 @@ public class CabinetService implements ICabinetService {
     private final IVerificationService verificationService;
     private final ITokenService tokenService;
 
+    @Override
     @Transactional
-    public void register(UserRegister userRegister) {
+    public String register(UserRegister userRegister) {
         if (userRepository.findByMail(userRegister.getMail()).isPresent()) {
             throw new UserAlreadyExistsException();
         }
         userRegister.setStatus(EStatus.WAITING_ACTIVATION);
         userRegister.setRole(ERole.USER);
-        userService.add(userRegister);
+        String uuid = userService.add(userRegister);
         verificationService.addCode(userRegister.getMail());
+        return uuid;
     }
 
+    @Override
     public ResponseEntity<?> login(UserLogin userLogin) {
         UserEntity userEntity = userRepository.findByMail(userLogin.getMail())
                 .orElseThrow(() -> new UserNotFoundException());

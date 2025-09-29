@@ -26,7 +26,7 @@ public class AuditController {
     @GetMapping
     public ResponseEntity<PageOfAudit<Audit>> getAudit(@RequestParam("page") int page, @RequestParam("size") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        PageOfAudit<Audit> result = as.getAll(pageable);
+        PageOfAudit<Audit> result = as.getPage(pageable);
         return ResponseEntity.ok(result);
     }
 

@@ -1,9 +1,12 @@
 package by.it_academy.jd2.Mk_JD2_111_25.FINAL.user.controller;
 
+import by.it_academy.jd2.Mk_JD2_111_25.FINAL.audit.enums.EEssenceType;
+import by.it_academy.jd2.Mk_JD2_111_25.FINAL.common.annotations.AuditPoint;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.user.dto.User;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.user.dto.UserRegister;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.user.dto.PageOfUser;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.user.service.api.IUserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,7 +22,7 @@ public class UsersController {
     private final IUserService userService;
 
     @PostMapping()
-    public ResponseEntity<String> create(@RequestBody UserRegister user) {
+    public ResponseEntity<String> create(@Valid @RequestBody UserRegister user) {
         userService.add(user);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -37,7 +40,7 @@ public class UsersController {
     }
 
     @PutMapping("/{uuid}/dt_update/{dt_update}")
-    public ResponseEntity<User> update(@PathVariable("uuid") String uuid, @PathVariable("dt_update") Long dtUpdate, @RequestBody UserRegister user) {
+    public ResponseEntity<User> update(@PathVariable("uuid") String uuid, @PathVariable("dt_update") Long dtUpdate, @Valid @RequestBody UserRegister user) {
         userService.update(uuid, dtUpdate, user);
         return ResponseEntity.status(HttpStatus.OK).build();
     }

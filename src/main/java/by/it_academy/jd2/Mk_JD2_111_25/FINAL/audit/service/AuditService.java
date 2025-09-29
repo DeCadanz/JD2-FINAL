@@ -3,6 +3,7 @@ package by.it_academy.jd2.Mk_JD2_111_25.FINAL.audit.service;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.audit.dto.Audit;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.audit.dto.PageOfAudit;
 
+import by.it_academy.jd2.Mk_JD2_111_25.FINAL.audit.enums.EEssenceType;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.audit.repository.AuditEntity;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.audit.repository.api.IAuditRepository;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.audit.service.api.IAuditService;
@@ -10,30 +11,31 @@ import by.it_academy.jd2.Mk_JD2_111_25.FINAL.audit.service.api.IAuditService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.annotation.Propagation;
+
+import java.time.Instant;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class AuditService implements IAuditService {
 
-    private final IAuditRepository ar;
+    private final IAuditRepository auditRepository;
 
     @Override
-
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Async
+    @Transactional
     public void add(Audit audit) {
-        System.out.println(audit.toString());
-        AuditEntity ae = new AuditEntity();
-        ae.setUuid(audit.getUuid());
-        ae.setDtCreate(audit.getDt_create());
-        ae.setUuuid(audit.getUserId());
-        ae.setText(audit.getText());
-        ae.setType(audit.getType());
-        ae.setEuuid(audit.getId());
-        System.out.println(ae.toString());
-        ar.save(ae);
+        AuditEntity auditEntity = new AuditEntity();
+        auditEntity.setUuid(UUID.randomUUID().toString());
+        auditEntity.setDtCreate(Instant.now().getEpochSecond());
+        auditEntity.setUuuid(audit.getUserId());
+        auditEntity.setText(audit.getText());
+        auditEntity.setType(audit.getType());
+        auditEntity.setEuuid(audit.getId());
+        auditRepository.save(auditEntity);
     }
 
     @Override
@@ -42,7 +44,7 @@ public class AuditService implements IAuditService {
     }
 
     @Override
-    public PageOfAudit<Audit> getAll(Pageable pageable) {
+    public PageOfAudit<Audit> getPage(Pageable pageable) {
         return null;
     }
 }

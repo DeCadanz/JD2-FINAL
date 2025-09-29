@@ -1,12 +1,15 @@
 package by.it_academy.jd2.Mk_JD2_111_25.FINAL.filter;
 
 
+import by.it_academy.jd2.Mk_JD2_111_25.FINAL.audit.dto.Audit;
+import by.it_academy.jd2.Mk_JD2_111_25.FINAL.audit.enums.EEssenceType;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.user.service.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,7 +28,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authHeader = request.getHeader("Authorization");
 
-        if(authHeader == null || !authHeader.startsWith("Bearer ")) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -42,7 +45,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 var authToken = new UsernamePasswordAuthenticationToken(username, null, authorities);
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             } else {
-                System.out.println("Token invalid");
+                throw new BadCredentialsException("Bad credentials");
             }
         } catch (Exception e) {
             System.out.println("Exception in token processing: " + e.getMessage());

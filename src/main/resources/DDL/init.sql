@@ -84,10 +84,10 @@ CREATE TABLE fin_app.audit
 (
     uuid character varying(36) NOT NULL PRIMARY KEY,
     dt_create bigint NOT NULL,
-    user_id character varying(36) NOT NULL,
+    user_id character varying(36),
     text character varying(256) NOT NULL,
     type character varying(128) NOT NULL,
-    essence_id character varying(36) NOT NULL
+    essence_id character varying(36)
 );
 
 ALTER TABLE IF EXISTS fin_app.audit

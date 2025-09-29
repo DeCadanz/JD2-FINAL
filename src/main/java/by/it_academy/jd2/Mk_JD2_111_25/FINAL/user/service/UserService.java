@@ -30,7 +30,7 @@ public class UserService implements IUserService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public void add(UserRegister userRegister) {
+    public String add(UserRegister userRegister) {
         if (userRepository.findByMail(userRegister.getMail()).isPresent()) {
             throw new UserAlreadyExistsException();
         }
@@ -46,6 +46,7 @@ public class UserService implements IUserService {
         userEntity.setStatus(userRegister.getStatus());
         userEntity.setPassword(passwordEncoder.encode(userRegister.getPassword()));
         userRepository.save(userEntity);
+        return uuid;
     }
 
     public User getByUuid(String uuid) {
@@ -77,16 +78,17 @@ public class UserService implements IUserService {
     }
 
     @Transactional
-    public void update(String uuid, Long dtUpdate, UserRegister user) {
+    public String update(String uuid, Long dtUpdate, UserRegister userRegister) {
         UserEntity userEntity = userRepository.findById(uuid)
                 .orElseThrow(() -> new UserNotFoundException());
         userEntity.setDtUpdate(dtUpdate);
-        userEntity.setMail(user.getMail());
-        userEntity.setFio(user.getFio());
-        userEntity.setRole(user.getRole());
-        userEntity.setStatus(user.getStatus());
-        userEntity.setPassword(user.getPassword());
+        userEntity.setMail(userRegister.getMail());
+        userEntity.setFio(userRegister.getFio());
+        userEntity.setRole(userRegister.getRole());
+        userEntity.setStatus(userRegister.getStatus());
+        userEntity.setPassword(userRegister.getPassword());
         userRepository.save(userEntity);
+        return uuid;
     }
 
     public PageOfUser<User> getPage(Pageable pageable) {

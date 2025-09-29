@@ -7,6 +7,7 @@ import by.it_academy.jd2.Mk_JD2_111_25.FINAL.account.repository.entity.Operation
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.account.repository.api.IOperationRepository;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.account.service.api.IAccountService;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.account.service.api.IOperationService;
+import by.it_academy.jd2.Mk_JD2_111_25.FINAL.common.exceptions.OperationNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -41,6 +42,7 @@ public class OperationService implements IOperationService {
         operationEntity.setValue(operation.getValue());
         operationEntity.setCurrency(operation.getCurrency());
         operationEntity.setAccount(uuid);
+        accountService.updateBalance(uuid, operation.getValue());
         operationRepository.save(operationEntity);
     }
 
@@ -66,7 +68,9 @@ public class OperationService implements IOperationService {
 
     @Transactional
     public void update(String aUuid, String uuid, Long dtUpdate, Operation operation) {
-        OperationEntity operationEntity = operationRepository.findById(uuid).orElseThrow();
+        accountService.checkByUuid(aUuid);
+        OperationEntity operationEntity = operationRepository.findById(uuid)
+                .orElseThrow(() -> new OperationNotFoundException());
         operationEntity.setDate(operation.getDate());
         operationEntity.setDescription(operation.getDescription());
         operationEntity.setCategory(operation.getCategory());
@@ -77,7 +81,9 @@ public class OperationService implements IOperationService {
 
     @Transactional
     public void delete(String aUuid, String uuid, Long dtUpdate, Operation operation) {
-        OperationEntity operationEntity = operationRepository.findByUuid(uuid).orElseThrow();
+        accountService.checkByUuid(aUuid);
+        OperationEntity operationEntity = operationRepository.findById(uuid)
+                .orElseThrow(() -> new OperationNotFoundException());
         operationRepository.delete(operationEntity);
     }
 }

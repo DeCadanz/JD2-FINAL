@@ -1,7 +1,5 @@
 package by.it_academy.jd2.Mk_JD2_111_25.FINAL.classifier.service;
 
-import by.it_academy.jd2.Mk_JD2_111_25.FINAL.audit.annotations.LogUserAction;
-import by.it_academy.jd2.Mk_JD2_111_25.FINAL.audit.enums.EEssenceType;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.classifier.dto.Currency;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.classifier.dto.PageOfCurrency;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.classifier.repository.api.ICurrencyRepository;
@@ -27,7 +25,7 @@ public class CurrencyService implements ICurrencyService {
 
     @Override
     @Transactional
-    @LogUserAction(actionText = "Added Currency", type = EEssenceType.CURRENCY)
+
     public String add(Currency currency) {
         CurrencyEntity currencyEntity = new CurrencyEntity();
         String uuid = UUID.randomUUID().toString();
