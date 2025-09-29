@@ -10,6 +10,7 @@ import java.util.Optional;
 public interface IUserRepository extends JpaRepository<UserEntity, String> {
     Optional<UserEntity> findByMail(String email);
     Optional<UserEntity> findByUuid(String uuid);
+    boolean existsByMail(String mail);
 
     Page<UserEntity> findAll(Pageable pageable);
 }

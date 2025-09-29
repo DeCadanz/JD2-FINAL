@@ -5,6 +5,6 @@ import org.springframework.http.ResponseEntity;
 
 public interface IVerificationService {
     public void addCode(String mail);
-    public ResponseEntity<?> verifyCode(String code, String mail);
+    public boolean verifyCode(String code, String mail);
     public String getCode(UserEntity user);
 }

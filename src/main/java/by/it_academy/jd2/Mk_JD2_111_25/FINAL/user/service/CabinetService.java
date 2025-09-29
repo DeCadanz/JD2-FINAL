@@ -1,7 +1,7 @@
 package by.it_academy.jd2.Mk_JD2_111_25.FINAL.user.service;
 
+import by.it_academy.jd2.Mk_JD2_111_25.FINAL.common.exceptions.CodeNotValidException;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.common.exceptions.InvalidPasswordException;
-import by.it_academy.jd2.Mk_JD2_111_25.FINAL.common.exceptions.UserAlreadyExistsException;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.common.exceptions.UserNotFoundException;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.common.exceptions.UserNotVerifiedException;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.user.dto.User;
@@ -29,20 +29,16 @@ public class CabinetService implements ICabinetService {
     private final IUserRepository userRepository;
     private final IUserService userService;
     private final PasswordEncoder passwordEncoder;
-    private final IVerificationService verificationService;
     private final ITokenService tokenService;
+    private final IVerificationService verificationService;
 
     @Override
     @Transactional
-    public String register(UserRegister userRegister) {
-        if (userRepository.findByMail(userRegister.getMail()).isPresent()) {
-            throw new UserAlreadyExistsException();
-        }
+    public void register(UserRegister userRegister) {
         userRegister.setStatus(EStatus.WAITING_ACTIVATION);
         userRegister.setRole(ERole.USER);
-        String uuid = userService.add(userRegister);
-        verificationService.addCode(userRegister.getMail());
-        return uuid;
+        userService.add(userRegister, true);
+
     }
 
     @Override
@@ -66,4 +62,13 @@ public class CabinetService implements ICabinetService {
         User user = userService.getByUuid(uuid);
         return ResponseEntity.ok(user);
     }
+
+    @Override
+    public ResponseEntity<?> verify(String code, String mail) {
+        if(verificationService.verifyCode(code,mail)){
+            return ResponseEntity.ok().build();
+        }
+        throw new CodeNotValidException();
+    }
+
 }

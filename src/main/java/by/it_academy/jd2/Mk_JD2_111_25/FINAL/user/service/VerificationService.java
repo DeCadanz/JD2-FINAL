@@ -1,6 +1,5 @@
 package by.it_academy.jd2.Mk_JD2_111_25.FINAL.user.service;
 
-import by.it_academy.jd2.Mk_JD2_111_25.FINAL.common.dto.ErrorResponse;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.common.exceptions.CodeNotFoundException;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.common.exceptions.CodeNotValidException;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.common.exceptions.UserNotFoundException;
@@ -39,7 +38,7 @@ public class VerificationService implements IVerificationService {
     }
 
     @Override
-    public ResponseEntity<?> verifyCode(String code, String mail) {
+    public boolean verifyCode(String code, String mail) {
         UserEntity userEntity = userRepository.findByMail(mail)
                 .orElseThrow(() -> new UserNotFoundException());
         String uuid = userEntity.getUuid();
@@ -49,9 +48,9 @@ public class VerificationService implements IVerificationService {
         if (ucode.equals(code)) {
             userEntity.setStatus(EStatus.ACTIVATED);
             userRepository.save(userEntity);
-            return ResponseEntity.ok().build();
+            return true;
         } else {
-            throw new CodeNotValidException();
+            return false;
         }
     }
 

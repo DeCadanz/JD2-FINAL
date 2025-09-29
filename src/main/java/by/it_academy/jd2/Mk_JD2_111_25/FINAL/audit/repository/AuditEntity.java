@@ -22,7 +22,7 @@ public class AuditEntity {
     private Long dtCreate;
 
     @Column(name = "user_id")
-    private String uuuid;
+    private String userId;
 
     @Column(name = "text")
     private String text;
@@ -32,5 +32,5 @@ public class AuditEntity {
     private EEssenceType type;
 
     @Column(name = "essence_id")
-    private String euuid;
+    private String id;
 }

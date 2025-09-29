@@ -26,7 +26,6 @@ public class AuditLogger {
     private final IAuditService auditService;
     private final ITokenService tokenService;
 
-
     @AfterReturning(pointcut =
             "execution(* by.it_academy.jd2.Mk_JD2_111_25.FINAL.user.controller.CabinetController.login(..))", returning = "result")
     public void logSuccessfulLogin(JoinPoint joinPoint, Object result) {
@@ -39,40 +38,34 @@ public class AuditLogger {
     }
 
     @AfterReturning(pointcut =
-            "execution(public String by.it_academy.jd2.Mk_JD2_111_25.FINAL.user.service.CabinetService.register" +
-                    "(by.it_academy.jd2.Mk_JD2_111_25.FINAL.user.dto.UserRegister))", returning = "result")
-    public void logSuccessfulRegister(JoinPoint joinPoint, String result) {
-        String text = "Успешная регистрация пользователя";
-        Audit audit = createAudit(result, text, EEssenceType.USER, result);
-        auditService.add(audit);
-    }
-
-    @AfterReturning(pointcut =
-            "execution(* by.it_academy.jd2.Mk_JD2_111_25.FINAL.user.service.VerificationService.verifyCode" +
+            "execution(* by.it_academy.jd2.Mk_JD2_111_25.FINAL.user.service.CabinetService.verify" +
                     "(String, String))", returning = "result")
     public void logSuccessfulVerification(JoinPoint joinPoint, Object result) {
-        String text = "Успешная верификация пользователя";
-        Audit audit = createAudit(null, text, EEssenceType.USER, null);
-        auditService.add(audit);
-    }
+            String text = "Успешная верификация пользователя";
+            Audit audit = createAudit(null, text, EEssenceType.USER, null);
+            auditService.add(audit);
+            }
 
     @AfterReturning(pointcut =
             "execution(* by.it_academy.jd2.Mk_JD2_111_25.FINAL.user.controller.CabinetController.me(..))", returning = "result")
     public void logGetUserPage(JoinPoint joinPoint, Object result) {
-        String userId = extractUuidFromResponse(result);
+        String userId = getUuidFromContext();
         String text = "Успешный запрос информации о себе";
         EEssenceType type = EEssenceType.USER;
-        String id = userId;
-        Audit audit = createAudit(userId, text, type, id);
+        Audit audit = createAudit(userId, text, type, userId);
         auditService.add(audit);
     }
 
     @AfterReturning(pointcut =
             "execution(public String by.it_academy.jd2.Mk_JD2_111_25.FINAL.user.service.UserService.add" +
-                    "(by.it_academy.jd2.Mk_JD2_111_25.FINAL.user.dto.UserRegister))", returning = "result")
+                    "(by.it_academy.jd2.Mk_JD2_111_25.FINAL.user.dto.UserRegister, boolean))", returning = "result")
     public void logSuccessfulAdd(JoinPoint joinPoint, String result) {
         String userId = getUuidFromContext();
+        Object[] args = joinPoint.getArgs();
         String text = "Успешное создание пользователя";
+        if ((boolean) args[1]) {
+            text = "Успешная самостоятельная регистрация пользователя";
+        }
         Audit audit = createAudit(userId, text, EEssenceType.USER, result);
         auditService.add(audit);
     }
@@ -190,7 +183,7 @@ public class AuditLogger {
         audit.setUserId(userId);
         audit.setText(text);
         audit.setType(type);
-        audit.setId(id);
+        audit.setEntityId(id);
         return audit;
     }
 

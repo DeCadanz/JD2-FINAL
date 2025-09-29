@@ -17,9 +17,9 @@ public class PageOfAudit<T> {
     private boolean first;
     private int number_of_elements;
     private boolean last;
-    private List<Audit> content;
+    private List<AuditUser> content;
 
-    public PageOfAudit(Page<Audit> page) {
+    public PageOfAudit(Page<AuditUser> page) {
         this.number = page.getNumber();
         this.size = page.getSize();
         this.total_pages = page.getTotalPages();

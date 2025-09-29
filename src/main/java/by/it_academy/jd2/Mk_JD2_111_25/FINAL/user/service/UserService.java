@@ -9,6 +9,7 @@ import by.it_academy.jd2.Mk_JD2_111_25.FINAL.user.repository.api.IUserRepository
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.user.repository.entity.UserEntity;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.user.service.api.IUserService;
 
+import by.it_academy.jd2.Mk_JD2_111_25.FINAL.user.service.api.IVerificationService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,10 +29,12 @@ public class UserService implements IUserService {
 
     private final IUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final IVerificationService verificationService;
 
     @Transactional
-    public String add(UserRegister userRegister) {
-        if (userRepository.findByMail(userRegister.getMail()).isPresent()) {
+    public String add(UserRegister userRegister, boolean selfRegister) {
+//        if (userRepository.findByMail(userRegister.getMail()).isPresent()) {
+        if (userRepository.existsByMail(userRegister.getMail())) {
             throw new UserAlreadyExistsException();
         }
         UserEntity userEntity = new UserEntity();
@@ -46,6 +49,9 @@ public class UserService implements IUserService {
         userEntity.setStatus(userRegister.getStatus());
         userEntity.setPassword(passwordEncoder.encode(userRegister.getPassword()));
         userRepository.save(userEntity);
+        if(selfRegister){
+            verificationService.addCode(userRegister.getMail());
+        }
         return uuid;
     }
 

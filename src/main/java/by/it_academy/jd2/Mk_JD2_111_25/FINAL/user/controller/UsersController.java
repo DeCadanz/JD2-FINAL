@@ -1,7 +1,5 @@
 package by.it_academy.jd2.Mk_JD2_111_25.FINAL.user.controller;
 
-import by.it_academy.jd2.Mk_JD2_111_25.FINAL.audit.enums.EEssenceType;
-import by.it_academy.jd2.Mk_JD2_111_25.FINAL.common.annotations.AuditPoint;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.user.dto.User;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.user.dto.UserRegister;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.user.dto.PageOfUser;
@@ -23,7 +21,7 @@ public class UsersController {
 
     @PostMapping()
     public ResponseEntity<String> create(@Valid @RequestBody UserRegister user) {
-        userService.add(user);
+        userService.add(user, false);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

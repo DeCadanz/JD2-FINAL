@@ -85,6 +85,8 @@ public class GlobalExceptionHandler {
         String text;
         if (requestUri.contains("/users")) {
             text = "Неудачная попытка создания (пользователь уже существует)";
+        } else if (requestUri.contains("/registration")) {
+            text = "Неудачная попытка регистрации (пользователь уже существует)";
         } else {
             text = "Неудачная попытка (а чего?)";
         }
@@ -225,7 +227,7 @@ public class GlobalExceptionHandler {
         audit.setUserId(userId);
         audit.setText(text);
         audit.setType(type);
-        audit.setId(id);
+        audit.setEntityId(id);
         return audit;
     }
 

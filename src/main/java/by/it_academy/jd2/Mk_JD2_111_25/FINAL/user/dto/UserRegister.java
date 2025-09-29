@@ -21,5 +21,4 @@ public class UserRegister {
     private EStatus status;
     @NotBlank
     private String password;
-
 }

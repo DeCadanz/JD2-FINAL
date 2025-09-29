@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 public class CabinetController {
 
     private final ICabinetService cabinetService;
-    private final IVerificationService verificationService;
 
     @PostMapping("/registration")
     public ResponseEntity<String> register(@Valid @RequestBody UserRegister user) {
@@ -28,7 +27,7 @@ public class CabinetController {
 
     @GetMapping("/verification")
     public ResponseEntity<?> verify(@RequestParam("code") String code, @RequestParam("mail") String mail) {
-        return verificationService.verifyCode(code, mail);
+        return cabinetService.verify(code, mail);
     }
 
     @PostMapping(path = "/login", produces = "application/json")
