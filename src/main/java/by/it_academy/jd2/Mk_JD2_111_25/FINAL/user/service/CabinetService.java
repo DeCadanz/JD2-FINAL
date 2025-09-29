@@ -65,7 +65,7 @@ public class CabinetService implements ICabinetService {
 
     @Override
     public ResponseEntity<?> verify(String code, String mail) {
-        if(verificationService.verifyCode(code,mail)){
+        if (verificationService.verifyCode(code, mail)) {
             return ResponseEntity.ok().build();
         }
         throw new CodeNotValidException();

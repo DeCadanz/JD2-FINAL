@@ -29,7 +29,6 @@ public class AccountService implements IAccountService {
 
     @Override
     @Transactional
-
     public String add(Account account, String uuid) {
         System.out.println(account.getCurrency());
         AccountEntity accountEntity = new AccountEntity();
@@ -53,16 +52,7 @@ public class AccountService implements IAccountService {
     public Account getByUuid(String uuid) {
         AccountEntity accountEntity = accountRepository.findById(uuid)
                 .orElseThrow(() -> new AccountNotFoundException());
-        Account account = new Account();
-        account.setUuid(accountEntity.getUuid());
-        account.setDtCreate(accountEntity.getDtCreate());
-        account.setDtUpdate(accountEntity.getDtUpdate());
-        account.setTitle(accountEntity.getTitle());
-        account.setDescription(accountEntity.getDescription());
-        account.setBalance(accountEntity.getBalance());
-        account.setType(accountEntity.getType());
-        account.setCurrency(accountEntity.getCurrency());
-        return account;
+        return getAccount(accountEntity);
     }
 
     @Override
@@ -70,16 +60,7 @@ public class AccountService implements IAccountService {
         Page<AccountEntity> page = accountRepository.findByUser(pageable, uUuid);
         List<Account> content = new ArrayList<>();
         for (AccountEntity accountEntity : page.getContent()) {
-            Account account = new Account();
-            account.setUuid(accountEntity.getUuid());
-            account.setDtCreate(accountEntity.getDtCreate());
-            account.setDtUpdate(accountEntity.getDtUpdate());
-            account.setTitle(accountEntity.getTitle());
-            account.setDescription(accountEntity.getDescription());
-            account.setBalance(accountEntity.getBalance());
-            account.setType(accountEntity.getType());
-            account.setCurrency(accountEntity.getCurrency());
-            content.add(account);
+            content.add(getAccount(accountEntity));
         }
         Page<Account> pageOfAccount = new PageImpl<>(content, pageable, page.getTotalElements());
         return new PageOfAccount<>(pageOfAccount);
@@ -87,7 +68,6 @@ public class AccountService implements IAccountService {
 
     @Override
     @Transactional
-
     public String update(String uuid, Long dtUpdate, Account account) {
         AccountEntity accountEntity = accountRepository.findById(uuid)
                 .orElseThrow(() -> new AccountNotFoundException());
@@ -113,5 +93,18 @@ public class AccountService implements IAccountService {
     public void checkByUuid(String uuid) {
         AccountEntity accountEntity = accountRepository.findById(uuid)
                 .orElseThrow(() -> new AccountNotFoundException());
+    }
+
+    private Account getAccount(AccountEntity accountEntity) {
+        Account account = new Account();
+        account.setUuid(accountEntity.getUuid());
+        account.setDtCreate(accountEntity.getDtCreate());
+        account.setDtUpdate(accountEntity.getDtUpdate());
+        account.setTitle(accountEntity.getTitle());
+        account.setDescription(accountEntity.getDescription());
+        account.setBalance(accountEntity.getBalance());
+        account.setType(accountEntity.getType());
+        account.setCurrency(accountEntity.getCurrency());
+        return account;
     }
 }

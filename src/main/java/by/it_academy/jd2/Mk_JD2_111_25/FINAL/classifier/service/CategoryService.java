@@ -25,7 +25,6 @@ public class CategoryService implements ICategoryService {
 
     @Override
     @Transactional
-
     public String add(OperationCategory category) {
         OperationCategoryEntity operationCategoryEntity = new OperationCategoryEntity();
         String uuid = UUID.randomUUID().toString();

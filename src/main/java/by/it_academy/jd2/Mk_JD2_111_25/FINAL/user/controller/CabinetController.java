@@ -4,7 +4,6 @@ import by.it_academy.jd2.Mk_JD2_111_25.FINAL.user.dto.User;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.user.dto.UserLogin;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.user.dto.UserRegister;
 import by.it_academy.jd2.Mk_JD2_111_25.FINAL.user.service.api.ICabinetService;
-import by.it_academy.jd2.Mk_JD2_111_25.FINAL.user.service.api.IVerificationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

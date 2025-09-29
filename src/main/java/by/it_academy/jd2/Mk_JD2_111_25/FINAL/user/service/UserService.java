@@ -33,12 +33,12 @@ public class UserService implements IUserService {
 
     @Transactional
     public String add(UserRegister userRegister, boolean selfRegister) {
-//        if (userRepository.findByMail(userRegister.getMail()).isPresent()) {
         if (userRepository.existsByMail(userRegister.getMail())) {
             throw new UserAlreadyExistsException();
         }
         UserEntity userEntity = new UserEntity();
         String uuid = UUID.randomUUID().toString();
+        System.out.println("created userID: " + uuid);
         Long utime = Instant.now().getEpochSecond();
         userEntity.setUuid(uuid);
         userEntity.setDtCreate(utime);
@@ -49,38 +49,22 @@ public class UserService implements IUserService {
         userEntity.setStatus(userRegister.getStatus());
         userEntity.setPassword(passwordEncoder.encode(userRegister.getPassword()));
         userRepository.save(userEntity);
-        if(selfRegister){
-            verificationService.addCode(userRegister.getMail());
+        if (selfRegister) {
+            verificationService.addCode(uuid, userRegister.getMail());
         }
         return uuid;
     }
 
     public User getByUuid(String uuid) {
-        User user = new User();
         UserEntity userEntity = userRepository.findById(uuid)
                 .orElseThrow(() -> new UserNotFoundException());
-        user.setUuid(uuid);
-        user.setDt_create(userEntity.getDtCreate());
-        user.setDt_update(userEntity.getDtUpdate());
-        user.setFio(userEntity.getFio());
-        user.setMail(userEntity.getMail());
-        user.setRole(userEntity.getRole());
-        user.setStatus(userEntity.getStatus());
-        return user;
+        return getUser(userEntity);
     }
 
     public User getByMail(String mail) {
-        User user = new User();
         UserEntity userEntity = userRepository.findByMail(mail)
                 .orElseThrow(() -> new UserNotFoundException());
-        user.setUuid(userEntity.getUuid());
-        user.setDt_create(userEntity.getDtCreate());
-        user.setDt_update(userEntity.getDtUpdate());
-        user.setFio(userEntity.getFio());
-        user.setMail(userEntity.getMail());
-        user.setRole(userEntity.getRole());
-        user.setStatus(userEntity.getStatus());
-        return user;
+        return getUser(userEntity);
     }
 
     @Transactional
@@ -100,18 +84,22 @@ public class UserService implements IUserService {
     public PageOfUser<User> getPage(Pageable pageable) {
         Page<UserEntity> page = userRepository.findAll(pageable);
         List<User> content = new ArrayList<>();
-        for(UserEntity userEntity : page.getContent()) {
-            User user = new User();
-            user.setUuid(userEntity.getUuid());
-            user.setDt_create(userEntity.getDtCreate());
-            user.setDt_update(userEntity.getDtUpdate());
-            user.setFio(userEntity.getFio());
-            user.setMail(userEntity.getMail());
-            user.setRole(userEntity.getRole());
-            user.setStatus(userEntity.getStatus());
-            content.add(user);
+        for (UserEntity userEntity : page.getContent()) {
+            content.add(getUser(userEntity));
         }
         Page<User> pageOfUser = new PageImpl<>(content, pageable, page.getTotalElements());
         return new PageOfUser<>(pageOfUser);
+    }
+
+    private User getUser(UserEntity userEntity) {
+        User user = new User();
+        user.setUuid(userEntity.getUuid());
+        user.setDt_create(userEntity.getDtCreate());
+        user.setDt_update(userEntity.getDtUpdate());
+        user.setFio(userEntity.getFio());
+        user.setMail(userEntity.getMail());
+        user.setRole(userEntity.getRole());
+        user.setStatus(userEntity.getStatus());
+        return user;
     }
 }

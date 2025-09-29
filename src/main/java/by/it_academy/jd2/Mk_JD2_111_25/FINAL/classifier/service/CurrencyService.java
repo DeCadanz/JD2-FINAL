@@ -25,7 +25,6 @@ public class CurrencyService implements ICurrencyService {
 
     @Override
     @Transactional
-
     public String add(Currency currency) {
         CurrencyEntity currencyEntity = new CurrencyEntity();
         String uuid = UUID.randomUUID().toString();
